@@ -112,6 +112,9 @@ COMMENT_BLOCK_BEGIN	= "/*"
 COMMENT_BLOCK_END	= "*/"
 COMMENT_CHAR 		= [a-zA-Z0-9\(\)\[\]\{\}\?\!\+\-\*\/\.\;] | {WhiteSpace}
 
+%state COMMENT_BLOCK
+%state COMMENT_ROW
+
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */

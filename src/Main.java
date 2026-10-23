@@ -80,10 +80,13 @@ public class Main
 		{
 			
 			e.printStackTrace();
-			fileWriter.close();
-			fileWriter = new PrintWriter(outputFileName);
-			fileWriter.print("ERROR");
-			fileWriter.close();
+			try {
+					fileWriter = new PrintWriter(outputFileName);
+					fileWriter.print("ERROR");
+					fileWriter.close();
+			} catch (Exception f_not_found) {
+				f_not_found.printStackTrace();
+			}
 		}
 	}
 }
