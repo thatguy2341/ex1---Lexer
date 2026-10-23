@@ -1,5 +1,4 @@
 import java.io.*;
-import java.io.PrintWriter;
 
 import java_cup.runtime.Symbol;
    
@@ -79,9 +78,20 @@ public class Main
 			     
 		catch (Exception e)
 		{
+			
 			e.printStackTrace();
+			fileWriter.close();
+			fileWriter = new PrintWriter(outputFileName);
+			fileWriter.print("ERROR");
+			fileWriter.close();
 		}
 	}
 }
 
 
+/* 
+TODO: check if the error actually deletes the whole file and leave only ERROR.
+TODO: check if there is only one " then there would error in any case possible and wont find another token instead.
+TODO: Actually check if the importance of the rules work.
+TODO: Check if there is end of file inside a comma row (i.e. //) then is there supposed to be an ERROR or not.
+*/ 

@@ -74,7 +74,44 @@ import java_cup.runtime.*;
 LineTerminator	= \r|\n|\r\n
 WhiteSpace		= {LineTerminator} | [ \t]
 INTEGER			= 0 | [1-9][0-9]*
-ID				= [a-z]+
+ID				= [a-zA-Z][a-zA-Z0-9]*
+STRING			= \"[a-zA-Z]*\"
+ARRAY 			= "array"
+CLASS 			= "class"
+EXTENDS 		= "extends"
+NEW 			= "new"
+NIL 			= "nil"
+IF 				= "if"
+ELSE 			= "else"
+WHILE 			= "while"
+RETURN 			= "return"
+TYPE_INT 		= "int"
+TYPE_STRING 	= "string"
+TYPE_VOID 		= "void"
+PLUS 			= "+"
+MINUS			= "-"
+TIMES			= "*"
+DIVIDE			= "/"
+EQ 				= "="
+LT 				= "<"
+GT 				= ">"
+AND 			= "and"
+OR 				= "or"
+LPAREN 			= "("
+RPAREN 			= ")"
+LBRACK 			= "["
+RBRACK 			= "]"
+LBRACE 			= "{"
+RBRACE 			= "}"
+COMMA 			= ","
+DOT 			= "."
+SEMICOLON 		= ";"
+ASSIGN 			= ":="
+COMMENT_ROW 	= "//"
+COMMENT_BLOCK_BEGIN	= "/*"
+COMMENT_BLOCK_END	= "*/"
+COMMENT_CHAR 		= [a-zA-Z0-9\(\)\[\]\{\}\?\!\+\-\*\/\.\;] | {WhiteSpace}
+
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */
@@ -93,15 +130,72 @@ ID				= [a-z]+
 /**************************************************************/
 
 <YYINITIAL> {
+{ARRAY}         { return symbol(TokenNames.ARRAY); }
+{CLASS}         { return symbol(TokenNames.CLASS); }
+{EXTENDS}       { return symbol(TokenNames.EXTENDS); }
+{NEW}           { return symbol(TokenNames.NEW); }
+{NIL}           { return symbol(TokenNames.NIL); }
+{IF}            { return symbol(TokenNames.IF); }
+{ELSE}          { return symbol(TokenNames.ELSE); }
+{WHILE}         { return symbol(TokenNames.WHILE); }
+{RETURN}        { return symbol(TokenNames.RETURN); }
+{TYPE_INT}      { return symbol(TokenNames.TYPE_INT); }
+{TYPE_STRING}   { return symbol(TokenNames.TYPE_STRING); }
+{TYPE_VOID}     { return symbol(TokenNames.TYPE_VOID); }
+{AND}           { return symbol(TokenNames.AND); }
+{OR}            { return symbol(TokenNames.OR); }
 
-"+"					{ return symbol(TokenNames.PLUS);}
-"-"					{ return symbol(TokenNames.MINUS);}
-"PPP"				{ return symbol(TokenNames.TIMES);}
-"/"					{ return symbol(TokenNames.DIVIDE);}
-"("					{ return symbol(TokenNames.LPAREN);}
-")"					{ return symbol(TokenNames.RPAREN);}
-{INTEGER}			{ return symbol(TokenNames.NUMBER, Integer.valueOf(yytext()));}
+{PLUS}          { return symbol(TokenNames.PLUS); }
+{MINUS}         { return symbol(TokenNames.MINUS); }
+{TIMES}         { return symbol(TokenNames.TIMES); }
+{DIVIDE}        { return symbol(TokenNames.DIVIDE); }
+{LPAREN}        { return symbol(TokenNames.LPAREN); }
+{RPAREN}        { return symbol(TokenNames.RPAREN); }
+{LBRACK}        { return symbol(TokenNames.LBRACK); }
+{RBRACK}        { return symbol(TokenNames.RBRACK); }
+{LBRACE}        { return symbol(TokenNames.LBRACE); }
+{RBRACE}        { return symbol(TokenNames.RBRACE); }
+{COMMA}         { return symbol(TokenNames.COMMA); }
+{DOT}           { return symbol(TokenNames.DOT); }
+{SEMICOLON}     { return symbol(TokenNames.SEMICOLON); }
+{ASSIGN}        { return symbol(TokenNames.ASSIGN); }
+{EQ}            { return symbol(TokenNames.EQ); }
+{LT}            { return symbol(TokenNames.LT); }
+{GT}            { return symbol(TokenNames.GT); }
+
+
+{INTEGER}			{
+	int annoying_num_of_tal = Integer.valueOf(yytext()); 
+	if(annoying_num_of_tal > 32767 || annoying_num_of_tal < 0) throw new Error();
+ 	return symbol(TokenNames.NUMBER, annoying_num_of_tal);
+}
+
 {ID}				{ return symbol(TokenNames.ID,     yytext());}
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
+
+{COMMENT_BLOCK_BEGIN} { yybegin(COMMENT_BLOCK);} 
+
+
 <<EOF>>				{ return symbol(TokenNames.EOF);}
+}
+
+
+
+
+
+<COMMENT_BLOCK>{
+
+{COMMENT_BLOCK_END} { yybegin(YYINITIAL);}
+{COMMENT_CHAR} 		{}
+<<EOF>>				{ throw new Error();}
+}
+
+
+
+
+<COMMENT_ROW>{
+
+{LineTerminator}	{ yybegin(YYINITIAL);}
+{COMMENT_CHAR} 		{}
+<<EOF>>				{ throw new Error();}
 }
