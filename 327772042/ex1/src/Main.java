@@ -22,6 +22,7 @@ public class Main
 		PrintWriter fileWriter = null;
 		String inputFileName = argv[0];
 		String outputFileName = argv[1];
+		int first = 1;
 		
 		try
 		{
@@ -78,8 +79,9 @@ public class Main
 				} else {
 					lineToPrint = String.format("%s[%d,%d]", name, line, col);
 				}
-
-				fileWriter.println(lineToPrint);
+				if(first == 1) first = 0;
+				else fileWriter.println();
+				fileWriter.print(lineToPrint);
 				
 				s = l.next_token();
 			}
@@ -115,6 +117,5 @@ public class Main
 
 /* 
 TODO: check if there is only one " then there would be error in any case possible and wont find another token instead.
-TODO: Actually check if the importance of the rules work.
 TODO: Check if there is end of file inside a comma row (i.e. //) then is there supposed to be an ERROR or not.
 */ 
