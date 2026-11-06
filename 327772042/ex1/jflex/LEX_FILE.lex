@@ -168,6 +168,7 @@ COMMENT_CHAR 		= [a-zA-Z0-9\(\)\[\]\{\}\?\!\+\-\*\/\.\;] | {WhiteSpace}
 
 
 {STRING} 			{ return symbol(TokenNames.STRING, yytext()); }
+0[0-9]+				{ throw new Error(); }
 {INTEGER}			{
 	int annoying_num_of_tal = Integer.valueOf(yytext()); 
 	if(annoying_num_of_tal > 32767 || annoying_num_of_tal < 0) throw new Error();
@@ -204,6 +205,6 @@ COMMENT_CHAR 		= [a-zA-Z0-9\(\)\[\]\{\}\?\!\+\-\*\/\.\;] | {WhiteSpace}
 
 {LineTerminator}	{ yybegin(YYINITIAL);}
 {COMMENT_CHAR} 		{}
-<<EOF>> 			{ yybegin(YYINITIAL); return symbol(TokenNames.EOF); }
+<<EOF>>   { throw new Error(); }
 [^] 				{ throw new Error(); }
 }
