@@ -107,13 +107,17 @@ COMMA 			= ","
 DOT 			= "."
 SEMICOLON 		= ";"
 ASSIGN 			= ":="
-COMMENT_ROW 	= "//"
+
+LINE_COMMENT_CHAR	= [a-zA-Z0-9 \t\(\)\[\]\{\}\?\!\+\-\*\/\.\;]
+COMMENT_ROW		= "//"{LINE_COMMENT_CHAR}*{LineTerminator}
+COMMENT_ROW_BAD	= "//"[^\r\n]*{LineTerminator}
+
 COMMENT_BLOCK_BEGIN	= "/*"
 COMMENT_BLOCK_END	= "*/"
 COMMENT_CHAR 		= [a-zA-Z0-9\(\)\[\]\{\}\?\!\+\-\*\/\.\;] | {WhiteSpace}
 
 %state COMMENT_BLOCK
-%state COMMENT_ROW
+
 
 
 /******************************/
@@ -179,7 +183,9 @@ COMMENT_CHAR 		= [a-zA-Z0-9\(\)\[\]\{\}\?\!\+\-\*\/\.\;] | {WhiteSpace}
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 
 {COMMENT_BLOCK_BEGIN} { yybegin(COMMENT_BLOCK);} 
-{COMMENT_ROW} 		{ yybegin(COMMENT_ROW); }
+
+{COMMENT_ROW} {/* valid // comment that ends with a newline - skip */}
+{COMMENT_ROW_BAD} {throw new Error();}
 
 <<EOF>>				{ return symbol(TokenNames.EOF);}
 
@@ -201,10 +207,3 @@ COMMENT_CHAR 		= [a-zA-Z0-9\(\)\[\]\{\}\?\!\+\-\*\/\.\;] | {WhiteSpace}
 
 
 
-<COMMENT_ROW>{
-
-{LineTerminator}	{ yybegin(YYINITIAL);}
-{COMMENT_CHAR} 		{}
-<<EOF>>   { throw new Error(); }
-[^] 				{ throw new Error(); }
-}
