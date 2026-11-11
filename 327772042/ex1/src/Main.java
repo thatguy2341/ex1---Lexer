@@ -114,8 +114,3 @@ public class Main
 	}
 }
 
-
-/* 
-TODO: check if there is only one " then there would be error in any case possible and wont find another token instead.
-TODO: Check if there is end of file inside a comma row (i.e. //) then is there supposed to be an ERROR or not.
-*/ 
